@@ -86,12 +86,13 @@ public class SearchService(SettingBean settingBean) : ISearchService
             var searchSource = inputSongIds[i].SearchSource;
             var songId = inputSongIds[i].SongId;
 
-            if (!songDict.ContainsKey(searchSource))
+            if (!songDict.TryGetValue(searchSource, out var list))
             {
-                songDict.Add(searchSource, []);
+                list = new List<string>(4);
+                songDict.Add(searchSource, list);
             }
 
-            songDict[searchSource].Add(songId);
+            list.Add(songId);
             songIndexDict[songId] = i + 1;
         }
 

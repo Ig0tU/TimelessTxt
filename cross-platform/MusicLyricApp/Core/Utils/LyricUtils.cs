@@ -740,13 +740,9 @@ public static partial class LyricUtils
 
                 var languageEnum = CastLanguage(tuple.Item1.Iso639_3);
 
-                if (certainDict.ContainsKey(languageEnum))
+                if (!certainDict.TryAdd(languageEnum, 1))
                 {
                     certainDict[languageEnum]++;
-                }
-                else
-                {
-                    certainDict[languageEnum] = 1;
                 }
             }
 
