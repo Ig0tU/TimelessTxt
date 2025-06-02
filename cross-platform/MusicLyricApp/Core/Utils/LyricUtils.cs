@@ -15,18 +15,19 @@ namespace MusicLyricApp.Core.Utils;
 /// <summary>
 /// 歌词处理基类
 /// </summary>
-public static class LyricUtils
+public static partial class LyricUtils
 {
-    private static readonly Regex VerbatimRegex4QQMusic = new(@"\(\d+,\d+\)");
-    
-    private static readonly Regex VerbatimRegex4NetEaseMusic = new(@"\(\d+,\d+,\d+\)");
-    
-    public static readonly Regex VerbatimLegalPrefixRegex = new(@"\[\d+,\d+\]");
-    
-    public static readonly Regex CommonLegalPrefixRegex = new(@"\[\d+:\d+.\d+\]");
-        
-    private const PinyinFormat PinyinDefineFormat = PinyinFormat.WITH_TONE_MARK  | PinyinFormat.LOWERCASE | PinyinFormat.WITH_U_UNICODE;
-        
+    private static readonly Regex VerbatimRegex4QQMusic = GetVerbatimRegex4QQMusicRegex();
+
+    private static readonly Regex VerbatimRegex4NetEaseMusic = GetVerbatimRegex4NetEaseMusicRegex();
+
+    public static readonly Regex VerbatimLegalPrefixRegex = GetVerbatimLegalPrefixRegex();
+
+    public static readonly Regex CommonLegalPrefixRegex = GetCommonLegalPrefixRegex();
+
+    private const PinyinFormat PinyinDefineFormat =
+        PinyinFormat.WITH_TONE_MARK | PinyinFormat.LOWERCASE | PinyinFormat.WITH_U_UNICODE;
+
     /// <summary>
     /// 获取输出结果
     /// </summary>
@@ -34,10 +35,12 @@ public static class LyricUtils
     {
         var param = settingBean.Param;
         var config = settingBean.Config;
-            
+
         var dotType = config.DotType;
-        var timestampFormat = param.OutputFileFormat == OutputFormatEnum.SRT ? config.SrtTimestampFormat : config.LrcTimestampFormat;
-            
+        var timestampFormat = param.OutputFileFormat == OutputFormatEnum.SRT
+            ? config.SrtTimestampFormat
+            : config.LrcTimestampFormat;
+
         var voListList = await FormatLyric(lyricVo, settingBean);
 
         if (config.EnableVerbatimLyric)
@@ -49,7 +52,7 @@ public static class LyricUtils
         }
 
         var res = new List<string>();
-            
+
         foreach (var voList in voListList)
         {
             if (param.OutputFileFormat == OutputFormatEnum.SRT)
@@ -58,7 +61,7 @@ public static class LyricUtils
             }
             else
             {
-                res.Add(string.Join(Environment.NewLine,  from o in voList select o.Print(timestampFormat, dotType)));
+                res.Add(string.Join(Environment.NewLine, from o in voList select o.Print(timestampFormat, dotType)));
             }
         }
 
@@ -71,7 +74,7 @@ public static class LyricUtils
         {
             return string.Empty;
         }
-        
+
         var defaultParam = new ConfigBean();
         var sb = new StringBuilder();
 
@@ -88,16 +91,17 @@ public static class LyricUtils
                 // 70
                 var timestamp = long.Parse(timeStr.Split(',')[0].Trim().Substring(1));
                 var lyricTimestamp = new LyricTimestamp(timestamp);
-                
+
                 var content = VerbatimRegex4QQMusic.Replace(line[parenthesesLength..], string.Empty);
-                
-                sb.Append(lyricTimestamp.PrintTimestamp(defaultParam.LrcTimestampFormat, defaultParam.DotType)).Append(content);
+
+                sb.Append(lyricTimestamp.PrintTimestamp(defaultParam.LrcTimestampFormat, defaultParam.DotType))
+                    .Append(content);
             }
             else
             {
                 sb.Append(line);
             }
-            
+
             sb.Append(Environment.NewLine);
         }
 
@@ -110,10 +114,10 @@ public static class LyricUtils
         {
             return string.Empty;
         }
-        
+
         var defaultParam = new ConfigBean();
         var sb = new StringBuilder();
-            
+
         foreach (var line in SplitLrc(originLrc))
         {
             // skip illegal verbatim line, eg: https://y.qq.com/n/ryqq/songDetail/000sNzbP2nHGs2
@@ -121,7 +125,7 @@ public static class LyricUtils
             {
                 continue;
             }
-                
+
             var matches = VerbatimRegex4QQMusic.Matches(line);
             if (matches.Count > 0)
             {
@@ -138,18 +142,19 @@ public static class LyricUtils
                     // 404
                     var timestamp = long.Parse(timeStr.Split(',')[0].Trim().Substring(1));
                     var lyricTimestamp = new LyricTimestamp(timestamp);
-                        
+
                     var content = line.Substring(contentStartIndex, leftParenthesesIndex - contentStartIndex);
                     // 首次执行，去除全行时间戳
                     if (i == 0)
                     {
                         content = new LyricLineVo(content).Content;
                     }
-                        
+
                     contentStartIndex = leftParenthesesIndex + parenthesesLength;
 
-                    sb.Append(lyricTimestamp.PrintTimestamp(defaultParam.LrcTimestampFormat, defaultParam.DotType)).Append(content);
-                        
+                    sb.Append(lyricTimestamp.PrintTimestamp(defaultParam.LrcTimestampFormat, defaultParam.DotType))
+                        .Append(content);
+
                     // 最后一次执行，增加行结束时间戳
                     if (i == matches.Count - 1)
                     {
@@ -179,10 +184,10 @@ public static class LyricUtils
         {
             return string.Empty;
         }
-        
+
         var defaultParam = new ConfigBean();
         var sb = new StringBuilder();
-        
+
         foreach (var originLine in SplitLrc(originLrc))
         {
             var line = originLine;
@@ -191,12 +196,12 @@ public static class LyricUtils
             if (prefixMatch.Success)
             {
                 var prefix = line.Substring(prefixMatch.Index, prefixMatch.Length);
-                
+
                 // remove prefix
                 line = line[(prefixMatch.Index + prefixMatch.Length)..];
 
                 Match match;
-                while((match = VerbatimRegex4NetEaseMusic.Match(line)).Success)
+                while ((match = VerbatimRegex4NetEaseMusic.Match(line)).Success)
                 {
                     var group = match.Groups[0];
 
@@ -205,28 +210,31 @@ public static class LyricUtils
                     // 390
                     var timestamp = long.Parse(timeStr.Split(',')[0].Trim()[1..]);
                     var lyricTimestamp = new LyricTimestamp(timestamp);
-                        
-                    line = line.Replace(timeStr, lyricTimestamp.PrintTimestamp(defaultParam.LrcTimestampFormat, defaultParam.DotType));
+
+                    line = line.Replace(timeStr,
+                        lyricTimestamp.PrintTimestamp(defaultParam.LrcTimestampFormat, defaultParam.DotType));
                 }
 
                 // 追加行尾 timestamp
                 var prefixArr = prefix.Split(',');
-                var lastTimestamp = new LyricTimestamp(long.Parse(prefixArr[0].Trim()[1..]) + long.Parse(prefixArr[1].Trim()[..^1]));
+                var lastTimestamp =
+                    new LyricTimestamp(long.Parse(prefixArr[0].Trim()[1..]) + long.Parse(prefixArr[1].Trim()[..^1]));
                 line += lastTimestamp.PrintTimestamp(defaultParam.LrcTimestampFormat, defaultParam.DotType);
             }
 
             sb.Append(line);
             sb.Append(Environment.NewLine);
         }
-        
+
         return sb.ToString();
     }
-    
+
     /// <summary>
     /// need try split sub lyricLineVO, resolve verbatim lyric mode
     /// </summary>
     /// <returns></returns>
-    private static List<LyricLineVo> FormatSubLineLyric(List<LyricLineVo> vos, string timestampFormat, DotTypeEnum dotType)
+    private static List<LyricLineVo> FormatSubLineLyric(List<LyricLineVo> vos, string timestampFormat,
+        DotTypeEnum dotType)
     {
         var res = new List<LyricLineVo>();
         foreach (var vo in vos)
@@ -236,12 +244,13 @@ public static class LyricUtils
             {
                 sb.Append(subVo.Timestamp.PrintTimestamp(timestampFormat, dotType) + subVo.Content);
             }
-                
+
             res.Add(new LyricLineVo(sb.ToString()));
         }
+
         return res;
     }
-        
+
     /// <summary>
     /// 歌词格式化
     /// </summary>
@@ -256,13 +265,13 @@ public static class LyricUtils
         var ignoreEmptyLyric = settingBean.Config.IgnoreEmptyLyric;
 
         var res = new List<List<LyricLineVo>>();
-            
+
         // 1. 未配置任何输出
         if (outputLyricsTypes.Count == 0)
         {
             return res;
         }
-        
+
         var originLyrics = SplitLrc(lyricVo.Lyric, searchSource, ignoreEmptyLyric);
 
         // 2. 仅输出原文  
@@ -274,7 +283,8 @@ public static class LyricUtils
         }
 
         // 3. 处理其他译文
-        var lyricsComplexList = await DealTranslateLyric(originLyrics, lyricVo, settingBean.Config.TransConfig, searchSource, outputLyricsTypes);
+        var lyricsComplexList = await DealTranslateLyric(originLyrics, lyricVo, settingBean.Config.TransConfig,
+            searchSource, outputLyricsTypes);
 
         // 原文歌词插入到结果集的指定位置
         if (originLyricsOutputSortInConfig != -1)
@@ -290,6 +300,7 @@ public static class LyricUtils
                 {
                     single = SortLrc(single, each, true);
                 }
+
                 break;
             case ShowLrcTypeEnum.ISOLATED:
                 if (settingBean.Config.SeparateFileForIsolated)
@@ -303,12 +314,14 @@ public static class LyricUtils
                         single.AddRange(each);
                     }
                 }
+
                 break;
             case ShowLrcTypeEnum.MERGE:
                 foreach (var each in lyricsComplexList)
                 {
                     single = MergeLrc(single, each, settingBean.Param.LrcMergeSeparator, true);
                 }
+
                 break;
             default:
                 throw new NotSupportedException("not support showLrcType: " + showLrcType);
@@ -336,7 +349,6 @@ public static class LyricUtils
      */
     private static List<LyricLineVo> SplitLrc(string lrc, SearchSourceEnum searchSource, bool ignoreEmptyLine)
     {
-
         var temp = SplitLrc(lrc);
 
         var resultList = new List<LyricLineVo>();
@@ -351,7 +363,7 @@ public static class LyricUtils
             }
 
             var lyricLineVo = new LyricLineVo(line);
-                
+
             // 无效内容处理
             if (lyricLineVo.IsIllegalContent())
             {
@@ -384,7 +396,7 @@ public static class LyricUtils
         while (i < lenA && j < lenB)
         {
             var compare = Compare(listA[i], listB[j], aFirst);
-                
+
             if (compare > 0)
             {
                 c.Add(listB[j++]);
@@ -409,7 +421,8 @@ public static class LyricUtils
     /// <summary>
     /// 歌词合并
     /// </summary>
-    private static List<LyricLineVo> MergeLrc(List<LyricLineVo> listA, List<LyricLineVo> listB, string splitStr, bool aFirst)
+    private static List<LyricLineVo> MergeLrc(List<LyricLineVo> listA, List<LyricLineVo> listB, string splitStr,
+        bool aFirst)
     {
         var c = SortLrc(listA, listB, aFirst);
 
@@ -417,7 +430,7 @@ public static class LyricUtils
         {
             return c;
         }
-            
+
         var list = new List<LyricLineVo>
         {
             c[0]
@@ -449,26 +462,27 @@ public static class LyricUtils
     /// <param name="searchSource">搜索来源</param>
     /// <param name="outputLyricsTypes">输出歌词类型列表</param>
     /// <returns></returns>
-    private static async Task<List<List<LyricLineVo>>> DealTranslateLyric(List<LyricLineVo> originList, LyricVo lyricVo, 
+    private static async Task<List<List<LyricLineVo>>> DealTranslateLyric(List<LyricLineVo> originList, LyricVo lyricVo,
         TransConfigBean transConfig, SearchSourceEnum searchSource, List<LyricsTypeEnum> outputLyricsTypes)
     {
         var result = new List<List<LyricLineVo>>();
-            
+
         // 不存在原文歌词
         if (originList.Count == 0)
         {
             return result;
         }
-        
+
         // 1. 初始化原始译文
         // 1.1 原始译文歌词的空行没有意义，指定 true 不走配置
         var baseTransList = SplitLrc(lyricVo.TranslateLyric, searchSource, true);
         // 1.2 处理译文精度误差, 译文缺省规则
-        var transList = ResolveTransLyricDigitDeviationAndLost(originList, baseTransList, transConfig.MatchPrecisionDeviation, transConfig.LostRule);
+        var transList = ResolveTransLyricDigitDeviationAndLost(originList, baseTransList,
+            transConfig.MatchPrecisionDeviation, transConfig.LostRule);
 
         // 推断原文歌词和原始译文歌词，对应语言
         LanguageEnum originLanguage = CertainLanguage(originList), baseTransLanguage = CertainLanguage(transList);
-            
+
         // 2. 处理其他输出类型
         foreach (var transTypeEnum in outputLyricsTypes)
         {
@@ -479,7 +493,8 @@ public static class LyricUtils
                     break;
                 case LyricsTypeEnum.TRANSLITERATION:
                     var baseTransliterationList = SplitLrc(lyricVo.TransliterationLyric, searchSource, true);
-                    var transliterationList = ResolveTransLyricDigitDeviationAndLost(originList, baseTransliterationList, transConfig.MatchPrecisionDeviation, transConfig.LostRule);
+                    var transliterationList = ResolveTransLyricDigitDeviationAndLost(originList,
+                        baseTransliterationList, transConfig.MatchPrecisionDeviation, transConfig.LostRule);
                     result.Add(transliterationList);
                     break;
                 case LyricsTypeEnum.PINYIN:
@@ -487,6 +502,7 @@ public static class LyricUtils
                     {
                         result.Add(await ToPinyin(originList, transConfig.LostRule));
                     }
+
                     break;
                 case LyricsTypeEnum.CHINESE:
                 case LyricsTypeEnum.ENGLISH:
@@ -510,14 +526,15 @@ public static class LyricUtils
                             foreach (var translateApi in GetAvailableTranslateApi(transConfig))
                             {
                                 string[] inputs = null, outputs = null;
-                                    
+
                                 if (translateApi.IsSupport(originLanguage, outputLanguage))
                                 {
                                     // 使用原文尝试进行翻译
                                     inputs = originList.Select(e => e.Content).ToArray();
                                     outputs = translateApi.Translate(inputs, originLanguage, outputLanguage);
                                 }
-                                else if (transList.Count != 0 && translateApi.IsSupport(baseTransLanguage, outputLanguage))
+                                else if (transList.Count != 0 &&
+                                         translateApi.IsSupport(baseTransLanguage, outputLanguage))
                                 {
                                     // 使用译文尝试翻译
                                     inputs = transList.Select(e => e.Content).ToArray();
@@ -531,23 +548,25 @@ public static class LyricUtils
                                     {
                                         outputList.Add(new LyricLineVo(outputs[i], originList[i].Timestamp));
                                     }
+
                                     result.Add(outputList);
                                     break;
                                 }
                             }
                         }
                     }
+
                     break;
             }
         }
 
         return result;
     }
-        
+
     public static List<ITranslateApi> GetAvailableTranslateApi(TransConfigBean transConfig)
     {
         var res = new List<ITranslateApi>();
-            
+
         try
         {
             res.Add(new CaiYunTranslateApi(transConfig.CaiYunToken));
@@ -560,7 +579,6 @@ public static class LyricUtils
             }
             catch (MusicLyricException)
             {
-                        
             }
         }
 
@@ -575,7 +593,8 @@ public static class LyricUtils
     /// <param name="precisionDigitDeviation">译文匹配精度误差</param>
     /// <param name="lostRule">译文缺失规则</param>
     /// <returns></returns>
-    private static List<LyricLineVo> ResolveTransLyricDigitDeviationAndLost(List<LyricLineVo> originList, List<LyricLineVo> baseTransList, 
+    private static List<LyricLineVo> ResolveTransLyricDigitDeviationAndLost(List<LyricLineVo> originList,
+        List<LyricLineVo> baseTransList,
         int precisionDigitDeviation, TransLyricLostRuleEnum lostRule)
     {
         var originTimeOffsetDict = new Dictionary<long, LyricLineVo>();
@@ -585,19 +604,19 @@ public static class LyricUtils
         }
 
         var notMatchTranslateDict = new Dictionary<int, LyricLineVo>();
-            
+
         // 误差 == 0
         for (var i = 0; i < baseTransList.Count; i++)
         {
             var translate = baseTransList[i];
             var timestamp = translate.Timestamp.TimeOffset;
-                
+
             if (!originTimeOffsetDict.Remove(timestamp))
             {
                 notMatchTranslateDict.Add(i, translate);
             }
         }
-            
+
         if (precisionDigitDeviation != 0)
         {
             foreach (var pair in notMatchTranslateDict)
@@ -606,8 +625,9 @@ public static class LyricUtils
                 var translate = pair.Value;
                 var timestamp = translate.Timestamp.TimeOffset;
 
-                var tsStart = Math.Max(index == 0 ? 0 : baseTransList[index - 1].Timestamp.TimeOffset + 1, timestamp - precisionDigitDeviation);
-                    
+                var tsStart = Math.Max(index == 0 ? 0 : baseTransList[index - 1].Timestamp.TimeOffset + 1,
+                    timestamp - precisionDigitDeviation);
+
                 long tsEnd;
                 if (index == baseTransList.Count - 1)
                 {
@@ -617,8 +637,9 @@ public static class LyricUtils
                 {
                     tsEnd = baseTransList[index + 1].Timestamp.TimeOffset - 1;
                 }
+
                 tsEnd = Math.Min(tsEnd, timestamp + precisionDigitDeviation);
-                    
+
                 for (var ts = tsStart; ts <= tsEnd; ts++)
                 {
                     if (originTimeOffsetDict.Remove(ts))
@@ -648,15 +669,15 @@ public static class LyricUtils
 
         return transList;
     }
-        
+
     private static Task<List<LyricLineVo>> ToPinyin(List<LyricLineVo> inputList, TransLyricLostRuleEnum lostRule)
     {
         var resultList = new List<LyricLineVo>();
-            
+
         foreach (var vo in inputList)
         {
             string content;
-                
+
             if (vo.IsIllegalContent())
             {
                 if (lostRule == TransLyricLostRuleEnum.IGNORE)
@@ -672,13 +693,13 @@ public static class LyricUtils
             {
                 content = Pinyin4Net.GetPinyin(vo.Content, PinyinDefineFormat);
             }
-                    
+
             resultList.Add(new LyricLineVo(content, vo.Timestamp));
         }
 
         return Task.FromResult(resultList);
     }
-        
+
     /**
      * 歌词排序函数
      */
@@ -705,7 +726,7 @@ public static class LyricUtils
         {
             var factory = new RankedLanguageIdentifierFactory();
             var identifier = factory.Load(stream);
-                
+
             var certainDict = new Dictionary<LanguageEnum, int>();
             foreach (var one in lineVos)
             {
@@ -713,10 +734,10 @@ public static class LyricUtils
 
                 var tuple = languages?.First();
                 if (tuple == null)
-                { 
+                {
                     continue;
                 }
-            
+
                 var languageEnum = CastLanguage(tuple.Item1.Iso639_3);
 
                 if (certainDict.ContainsKey(languageEnum))
@@ -728,7 +749,7 @@ public static class LyricUtils
                     certainDict[languageEnum] = 1;
                 }
             }
-            
+
             var result = LanguageEnum.OTHER;
             var resultCount = 0;
 
@@ -740,11 +761,11 @@ public static class LyricUtils
                     resultCount = pair.Value;
                 }
             }
-                
+
             return result;
         }
     }
-        
+
     private static LanguageEnum CastLanguage(string str)
     {
         switch (str.ToUpper())
@@ -767,7 +788,7 @@ public static class LyricUtils
                 return LanguageEnum.OTHER;
         }
     }
-        
+
     public static LanguageEnum CastToLanguageEnum(LyricsTypeEnum lyricsTypeEnum)
     {
         switch (lyricsTypeEnum)
@@ -793,4 +814,16 @@ public static class LyricUtils
                 return LyricsTypeEnum.ORIGIN_TRANS;
         }
     }
+
+    [GeneratedRegex(@"\[\d+:\d+.\d+\]")]
+    private static partial Regex GetCommonLegalPrefixRegex();
+
+    [GeneratedRegex(@"\[\d+,\d+\]")]
+    private static partial Regex GetVerbatimLegalPrefixRegex();
+
+    [GeneratedRegex(@"\(\d+,\d+,\d+\)")]
+    private static partial Regex GetVerbatimRegex4NetEaseMusicRegex();
+
+    [GeneratedRegex(@"\(\d+,\d+\)")]
+    private static partial Regex GetVerbatimRegex4QQMusicRegex();
 }

@@ -11,7 +11,7 @@ using NLog;
 
 namespace MusicLyricApp.Core.Utils;
 
-public static class GlobalUtils
+public static partial class GlobalUtils
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -93,7 +93,7 @@ public static class GlobalUtils
         }
 
         // QQ 音乐，数字+字母，直接通过
-        if (searchSource == SearchSourceEnum.QQ_MUSIC && Regex.IsMatch(input, @"^[a-zA-Z0-9]*$"))
+        if (searchSource == SearchSourceEnum.QQ_MUSIC && LettersAndNumbersRegex().IsMatch(input))
         {
             return new InputSongId(input, searchSource, searchType);
         }
@@ -156,7 +156,7 @@ public static class GlobalUtils
      */
     public static bool CheckNum(string s)
     {
-        return Regex.IsMatch(s, "^\\d+$", RegexOptions.Compiled);
+        return NumberRegex().IsMatch(s);
     }
 
     /**
@@ -194,7 +194,7 @@ public static class GlobalUtils
 
         try
         {
-            foreach (Match match in new Regex(@"\$fillLength\([^\)]*\)").Matches(content))
+            foreach (Match match in FillLengthRegex().Matches(content))
             {
                 var raw = match.Value;
 
@@ -341,4 +341,13 @@ public static class GlobalUtils
             return str;
         }
     }
+
+    [GeneratedRegex("^[a-zA-Z0-9]*$")]
+    private static partial Regex LettersAndNumbersRegex();
+    
+    [GeneratedRegex("^\\d+$", RegexOptions.Compiled)]
+    private static partial Regex NumberRegex();
+    
+    [GeneratedRegex(@"\$fillLength\([^\)]*\)")]
+    private static partial Regex FillLengthRegex();
 }
