@@ -198,8 +198,8 @@ public static partial class GlobalUtils
             {
                 var raw = match.Value;
 
-                var leftQuote = raw.IndexOf("(", StringComparison.Ordinal) + 1;
-                var rightQuote = raw.IndexOf(")", StringComparison.Ordinal);
+                var leftQuote = raw.IndexOf('(') + 1;
+                var rightQuote = raw.IndexOf(')');
 
                 var split = raw.Substring(leftQuote, rightQuote - leftQuote).Split(',');
                 // 三个参数
