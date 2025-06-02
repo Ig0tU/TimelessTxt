@@ -14,7 +14,7 @@ public static class EnumDisplayHelper
 
         public override string ToString() => Description;
     }
-    
+
     public static ObservableCollection<EnumDisplayItem<T>> GetEnumDisplayCollection<T>() where T : Enum
     {
         return new ObservableCollection<EnumDisplayItem<T>>(
@@ -29,11 +29,14 @@ public static class EnumDisplayHelper
 
     private static string GetDescription<T>(T enumValue) where T : Enum
     {
-        var fi = enumValue.GetType().GetField(enumValue.ToString());
-        if (fi?.GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attributes && attributes.Any())
+        var name = enumValue.ToString();
+        var fi = enumValue.GetType().GetField(name);
+        if (fi?.GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attributes &&
+            attributes.Any())
         {
             return attributes[0].Description;
         }
-        return enumValue.ToString();
+
+        return name;
     }
 }
