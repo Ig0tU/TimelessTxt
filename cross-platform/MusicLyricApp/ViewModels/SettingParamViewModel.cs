@@ -38,6 +38,22 @@ public partial class SettingParamViewModel : ViewModelBase
         if (value != null) _settingBean.Config.TransConfig.LostRule = value.Value;
     }
     
+    // 3. 中文处理策略
+    public ObservableCollection<EnumDisplayHelper.EnumDisplayItem<ChineseProcessRuleEnum>> ChineseProcessRules { get; } =
+        EnumDisplayHelper.GetEnumDisplayCollection<ChineseProcessRuleEnum>();
+    
+    [ObservableProperty]
+    private EnumDisplayHelper.EnumDisplayItem<ChineseProcessRuleEnum> _selectedChineseProcessRuleItem;
+
+    public ChineseProcessRuleEnum SelectedChineseProcessRule => SelectedChineseProcessRuleItem?.Value ?? default;
+    
+    partial void OnSelectedChineseProcessRuleItemChanged(
+        EnumDisplayHelper.EnumDisplayItem<ChineseProcessRuleEnum>? oldValue,
+        EnumDisplayHelper.EnumDisplayItem<ChineseProcessRuleEnum>? newValue)
+    {
+        if (newValue != null) _settingBean.Config.ChineseProcessRule = newValue.Value;
+    }
+    
     // 5. LRC 时间戳
     [ObservableProperty] private string _lrcTimestampFormat;
     
@@ -182,6 +198,7 @@ public partial class SettingParamViewModel : ViewModelBase
         
         SelectedDotTypeItem = DotTypes.First(item => Equals(item.Value, _settingBean.Config.DotType));
         SelectedTransLyricLostRuleItem = TransLyricLostRules.First(item => Equals(item.Value, _settingBean.Config.TransConfig.LostRule));
+        SelectedChineseProcessRuleItem = ChineseProcessRules.First(item => Equals(item.Value, _settingBean.Config.ChineseProcessRule));
         LrcTimestampFormat = _settingBean.Config.LrcTimestampFormat;
         SrtTimestampFormat = _settingBean.Config.SrtTimestampFormat;
         IgnoreEmptyLyric = _settingBean.Config.IgnoreEmptyLyric;

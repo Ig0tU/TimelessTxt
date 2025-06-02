@@ -329,6 +329,35 @@ public static partial class GlobalUtils
     {
         return string.Join(Environment.NewLine, strList);
     }
+    
+    /// <summary>
+    /// 将序列拆分成指定大小的批次。
+    /// </summary>
+    /// <typeparam name="T">元素类型</typeparam>
+    /// <param name="source">要拆分的源序列</param>
+    /// <param name="size">每批的大小（必须 > 0）</param>
+    /// <returns>批次列表，每批为一个 List&lt;T&gt;</returns>
+    public static IEnumerable<List<T>> Batch<T>(IEnumerable<T> source, int size)
+    {
+        if (source == null) throw new ArgumentNullException(nameof(source));
+        if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size), "Batch size must be greater than 0.");
+
+        var batch = new List<T>(size);
+        foreach (var item in source)
+        {
+            batch.Add(item);
+            if (batch.Count == size)
+            {
+                yield return batch;
+                batch = new List<T>(size);
+            }
+        }
+
+        if (batch.Count > 0)
+        {
+            yield return batch;
+        }
+    }
 
     private static string ControlLength(string str)
     {

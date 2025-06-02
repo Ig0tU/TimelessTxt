@@ -129,11 +129,11 @@ public class LyricResult
     public bool Uncollected { get; set; }
     public LyricUser TransUser { get; set; }
     public LyricUser LyricUser { get; set; }
-    public Lrc Lrc { get; set; }
+    public Lrc? Lrc { get; set; }
     public Lrc Klyric { get; set; }
-    public Lrc Tlyric { get; set; }
-    public Lrc Romalrc { get; set; }
-    public Lrc Yrc { get; set; }
+    public Lrc? Tlyric { get; set; }
+    public Lrc? Romalrc { get; set; }
+    public Lrc? Yrc { get; set; }
     public long Code { get; set; }
 }
 

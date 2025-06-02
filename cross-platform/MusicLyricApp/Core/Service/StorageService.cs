@@ -204,7 +204,7 @@ public class StorageService : IStorageService
 
     private static async Task WriteToFile(IStorageFolder folder, SaveVo saveVo, SettingBean settingBean)
     {
-        var extension = settingBean.Param.OutputFileFormat.ToDescription();
+        var extension = settingBean.Param.OutputFileFormat.ToDescription().ToLower();
         var encoding = GlobalUtils.GetEncoding(settingBean.Param.Encoding);
         var filename = GlobalUtils.GetOutputName(saveVo, settingBean.Config.OutputFileNameFormat,
             settingBean.Config.SingerSeparator);

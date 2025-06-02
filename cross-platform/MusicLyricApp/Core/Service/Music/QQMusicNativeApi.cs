@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using MusicLyricApp.Core.Utils;
 using MusicLyricApp.Models;
+using NLog;
 
 namespace MusicLyricApp.Core.Service.Music;
 
@@ -16,6 +17,8 @@ public class QQMusicNativeApi(Func<string> cookieFunc) : BaseNativeApi(cookieFun
         { "contentroma", "roma" }, // 罗马音
         { "Lyric_1", "lyric" }, // 解压后的内容
     };
+    
+    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
     protected override string HttpRefer()
     {
@@ -164,8 +167,9 @@ public class QQMusicNativeApi(Func<string> cookieFunc) : BaseNativeApi(cookieFun
             {
                 decompressText = Decrypter.DecryptLyrics(text) ?? "";
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.Error(ex, "QQMusicNativeApi GetLyric DecryptLyrics failed, songId: {SongId}", songId);
                 continue;
             }
 

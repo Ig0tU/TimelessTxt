@@ -37,6 +37,11 @@ public class ConfigBean
     /// 小数位处理策略
     /// </summary>
     public DotTypeEnum DotType = DotTypeEnum.DOWN;
+    
+    /// <summary>
+    /// 中文处理策略
+    /// </summary>
+    public ChineseProcessRuleEnum ChineseProcessRule = ChineseProcessRuleEnum.IGNORE;
 
     /// <summary>
     /// 多个歌手的分隔符

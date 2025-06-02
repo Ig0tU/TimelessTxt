@@ -7,6 +7,10 @@ public static class Constants
 {
     public static readonly string SettingPath = Environment.CurrentDirectory + "\\MusicLyricAppSetting.json";
 
+    public const int BatchQuerySize = 300;
+
+    public const int SleepMsBetweenBatchQuery = 500;
+
     public static class HelpTips
     {
         public const string Prefix = "【提示区】";

@@ -6,6 +6,7 @@ using System.Net;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using MusicLyricApp.Core.Utils;
 using MusicLyricApp.Models;
 using Newtonsoft.Json;
@@ -261,31 +262,43 @@ public class NetEaseMusicNativeApi : BaseNativeApi
     /// <summary>
     /// 批量获得歌曲详情
     /// </summary>
-    /// <param name="songIds">歌曲ID</param>
+    /// <param name="inputSongIds">歌曲ID</param>
     /// <exception cref="WebException"></exception>
     /// <returns></returns>
-    private DetailResult GetDetail(IEnumerable<string> songIds)
+    private DetailResult GetDetail(IEnumerable<string> inputSongIds)
     {
         const string url = "https://music.163.com/weapi/v3/song/detail?csrf_token=";
 
-        var songRequests = new StringBuilder();
-        foreach (var songId in songIds)
+        var allResults = new List<Song>();
+        var cnt = 1;
+        
+        foreach (var songIds in GlobalUtils.Batch(inputSongIds, Constants.BatchQuerySize))
         {
-            songRequests.Append("{'id':'").Append(songId).Append("'}").Append(',');
-        }
-
-        var data = new Dictionary<string, string>
-        {
+            var songs = songIds.Select(id => new { id });
+            var data = new Dictionary<string, string>
             {
-                "c",
-                "[" + songRequests.Remove(songRequests.Length - 1, 1) + "]"
-            },
-            { "csrf_token", string.Empty },
+                { "c", JsonConvert.SerializeObject(songs) },
+                { "csrf_token", string.Empty }
+            };
+
+            var raw = SendPost(url, Prepare(JsonConvert.SerializeObject(data)));
+            var partialResult = JsonConvert.DeserializeObject<DetailResult>(raw);
+            if (partialResult?.Code == 200)
+            {
+                allResults.AddRange(partialResult.Songs);
+            }
+
+            if (cnt++ % 2 == 0)
+            {
+                Thread.Sleep(Constants.SleepMsBetweenBatchQuery); // sleep 500ms after every two batches
+            }
+        }
+        
+        return new DetailResult
+        {
+            Code = 200,
+            Songs = allResults.ToArray()
         };
-
-        var raw = SendPost(url, Prepare(JsonConvert.SerializeObject(data)));
-
-        return JsonConvert.DeserializeObject<DetailResult>(raw);
     }
 
     private Dictionary<string, string> Prepare(string raw)

@@ -13,9 +13,13 @@
             <Expander Header="歌词设置" HorizontalAlignment="Stretch">
                 <StackPanel Spacing="8">
                     <WrapPanel>
-                        <CheckBox Content="逐字歌词"
-                                  IsChecked="{Binding SettingParamViewModel.EnableVerbatimLyric, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                  Margin="0,0,8,8" />
+                        <TextBlock Text="中文处理：" Width="100" Margin="0,0,8,8" VerticalAlignment="Center" />
+                        <ComboBox ItemsSource="{Binding SettingParamViewModel.ChineseProcessRules}"
+                                  SelectedItem="{Binding SettingParamViewModel.SelectedChineseProcessRuleItem}"
+                                  Width="120" Margin="0,0,8,8" />
+                        
+                        <CheckBox Content="逐字歌词" Width="100" Margin="0,0,8,8" 
+                                  IsChecked="{Binding SettingParamViewModel.EnableVerbatimLyric, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         
                         <CheckBox Content="跳过空白歌词行"
                                   IsChecked="{Binding SettingParamViewModel.IgnoreEmptyLyric, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -26,7 +30,7 @@
                         <TextBlock Text="译文缺省规则：" Width="100" Margin="0,0,8,8" VerticalAlignment="Center" />
                         <ComboBox ItemsSource="{Binding SettingParamViewModel.TransLyricLostRules}"
                                   SelectedItem="{Binding SettingParamViewModel.SelectedTransLyricLostRuleItem}"
-                                  Width="100" Margin="0,0,8,8" />
+                                  Width="120" Margin="0,0,8,8" />
                         
                         <TextBlock Text="译文匹配精度：" Width="100" Margin="0,0,8,8" VerticalAlignment="Center" />
                         <TextBox
