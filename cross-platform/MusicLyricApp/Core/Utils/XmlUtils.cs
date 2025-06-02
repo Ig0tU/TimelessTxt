@@ -49,7 +49,7 @@ public static partial class XmlUtils
             currentPos = match.Index + match.Length;
         }
 
-        sb.Append(content.Substring(currentPos));
+        sb.Append(content[currentPos..]);
 
         return sb.ToString();
     }
@@ -81,7 +81,7 @@ public static partial class XmlUtils
                     var part1 = content.Substring(left, part.IndexOf("="));
                     if (!part1.Trim().Contains(" "))
                     {
-                        content = content.Substring(0, left) + content.Substring(i + 1);
+                        content = content[..left] + content[(i + 1)..];
                         i = 0;
                         continue;
                     }

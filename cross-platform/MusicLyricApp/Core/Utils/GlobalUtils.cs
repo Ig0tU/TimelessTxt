@@ -104,7 +104,7 @@ public static partial class GlobalUtils
         if (index != -1)
         {
             var sb = new StringBuilder();
-            foreach (var c in input.Substring(index + urlKeyword.Length).ToCharArray())
+            foreach (var c in input[(index + urlKeyword.Length)..].ToCharArray())
             {
                 if (char.IsLetterOrDigit(c))
                 {
@@ -134,7 +134,7 @@ public static partial class GlobalUtils
                 {
                     var data = html.Substring(indexOf + keyword.Length, endIndexOf - indexOf - keyword.Length);
 
-                    data = data.Trim().Substring(1);
+                    data = data.Trim()[1..];
 
                     var obj = (JObject)JsonConvert.DeserializeObject(data);
 
@@ -220,7 +220,7 @@ public static partial class GlobalUtils
                 {
                     var diff = targetLength - res.Length;
 
-                    res = (diff < keyword.Length ? keyword.Substring(0, diff) : keyword) + res;
+                    res = (diff < keyword.Length ? keyword[..diff] : keyword) + res;
                 }
 
                 content = content.Replace(raw, res);
@@ -334,7 +334,7 @@ public static partial class GlobalUtils
     {
         if (str.Length > 128)
         {
-            return str.Substring(0, 125) + "...";
+            return str[..125] + "...";
         }
         else
         {

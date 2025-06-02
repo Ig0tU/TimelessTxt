@@ -89,7 +89,7 @@ public static partial class LyricUtils
                 // [70,80]
                 var timeStr = line.Substring(leftParenthesesIndex, parenthesesLength);
                 // 70
-                var timestamp = long.Parse(timeStr.Split(',')[0].Trim().Substring(1));
+                var timestamp = long.Parse(timeStr.Split(',')[0].Trim()[1..]);
                 var lyricTimestamp = new LyricTimestamp(timestamp);
 
                 var content = VerbatimRegex4QQMusic.Replace(line[parenthesesLength..], string.Empty);
@@ -140,7 +140,7 @@ public static partial class LyricUtils
                     // (404,202)
                     var timeStr = line.Substring(leftParenthesesIndex, parenthesesLength);
                     // 404
-                    var timestamp = long.Parse(timeStr.Split(',')[0].Trim().Substring(1));
+                    var timestamp = long.Parse(timeStr.Split(',')[0].Trim()[1..]);
                     var lyricTimestamp = new LyricTimestamp(timestamp);
 
                     var content = line.Substring(contentStartIndex, leftParenthesesIndex - contentStartIndex);
@@ -160,7 +160,7 @@ public static partial class LyricUtils
                     {
                         // 202
                         var timeCostStr = timeStr.Split(',')[1].Trim();
-                        var timeCost = long.Parse(timeCostStr.Substring(0, timeCostStr.Length - 1));
+                        var timeCost = long.Parse(timeCostStr[..^1]);
 
                         sb.Append(lyricTimestamp.Add(timeCost)
                             .PrintTimestamp(defaultParam.LrcTimestampFormat, defaultParam.DotType));

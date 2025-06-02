@@ -645,7 +645,7 @@ public class LyricLineVo : IComparable
                 timestampIndex = mainContent.IndexOf(timestamp, StringComparison.Ordinal);
 
                 // add first
-                result.Add(new LyricLineVo(mainContent.Substring(0, timestampIndex), main.Timestamp));
+                result.Add(new LyricLineVo(mainContent[..timestampIndex], main.Timestamp));
             }
 
             // find next timestamp
@@ -663,7 +663,7 @@ public class LyricLineVo : IComparable
             else
             {
                 // already in end
-                var content = mainContent.Substring(timestampIndex + timestamp.Length);
+                var content = mainContent[(timestampIndex + timestamp.Length)..];
                 result.Add(new LyricLineVo(content, new LyricTimestamp(timestamp)));
             }
 
