@@ -525,7 +525,7 @@ public static partial class LyricUtils
                             // 调用合适的翻译 API
                             foreach (var translateApi in GetAvailableTranslateApi(transConfig))
                             {
-                                string[] inputs = null, outputs = null;
+                                string[]? inputs = null, outputs = null;
 
                                 if (translateApi.IsSupport(originLanguage, outputLanguage))
                                 {
@@ -721,45 +721,31 @@ public static partial class LyricUtils
     private static LanguageEnum CertainLanguage(List<LyricLineVo> lineVos)
     {
         var assembly = Assembly.GetExecutingAssembly();
-        using (var stream = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames()
-                   .Single(str => str.EndsWith("Core14.profile.xml"))))
+        using var stream = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames()
+            .Single(str => str.EndsWith("Core14.profile.xml")));
+        var factory = new RankedLanguageIdentifierFactory();
+        var identifier = factory.Load(stream);
+
+        var certainDict = new Dictionary<LanguageEnum, int>();
+        foreach (var one in lineVos)
         {
-            var factory = new RankedLanguageIdentifierFactory();
-            var identifier = factory.Load(stream);
+            var languages = identifier.Identify(one.Content);
 
-            var certainDict = new Dictionary<LanguageEnum, int>();
-            foreach (var one in lineVos)
+            var tuple = languages?.First();
+            if (tuple == null)
             {
-                var languages = identifier.Identify(one.Content);
-
-                var tuple = languages?.First();
-                if (tuple == null)
-                {
-                    continue;
-                }
-
-                var languageEnum = CastLanguage(tuple.Item1.Iso639_3);
-
-                if (!certainDict.TryAdd(languageEnum, 1))
-                {
-                    certainDict[languageEnum]++;
-                }
+                continue;
             }
 
-            var result = LanguageEnum.OTHER;
-            var resultCount = 0;
+            var languageEnum = CastLanguage(tuple.Item1.Iso639_3);
 
-            foreach (var pair in certainDict)
+            if (!certainDict.TryAdd(languageEnum, 1))
             {
-                if (pair.Value > resultCount)
-                {
-                    result = pair.Key;
-                    resultCount = pair.Value;
-                }
+                certainDict[languageEnum]++;
             }
-
-            return result;
         }
+            
+        return certainDict.Count == 0 ? LanguageEnum.OTHER : certainDict.MaxBy(pair => pair.Value).Key;
     }
 
     private static LanguageEnum CastLanguage(string str)
