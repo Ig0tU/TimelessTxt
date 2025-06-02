@@ -18,10 +18,9 @@ public partial class SettingParamViewModel : ViewModelBase
     public DotTypeEnum SelectedDotType => SelectedDotTypeItem?.Value ?? default;
     
     partial void OnSelectedDotTypeItemChanged(
-        EnumDisplayHelper.EnumDisplayItem<DotTypeEnum>? oldValue,
-        EnumDisplayHelper.EnumDisplayItem<DotTypeEnum>? newValue)
+        EnumDisplayHelper.EnumDisplayItem<DotTypeEnum>? value)
     {
-        if (newValue != null) _settingBean.Config.DotType = newValue.Value;
+        if (value != null) _settingBean.Config.DotType = value.Value;
     }
     
     // 2. 译文缺省规则
@@ -34,144 +33,143 @@ public partial class SettingParamViewModel : ViewModelBase
     public TransLyricLostRuleEnum SelectedTransLyricLostRule => SelectedTransLyricLostRuleItem?.Value ?? default;
     
     partial void OnSelectedTransLyricLostRuleItemChanged(
-        EnumDisplayHelper.EnumDisplayItem<TransLyricLostRuleEnum>? oldValue,
-        EnumDisplayHelper.EnumDisplayItem<TransLyricLostRuleEnum>? newValue)
+        EnumDisplayHelper.EnumDisplayItem<TransLyricLostRuleEnum>? value)
     {
-        if (newValue != null) _settingBean.Config.TransConfig.LostRule = newValue.Value;
+        if (value != null) _settingBean.Config.TransConfig.LostRule = value.Value;
     }
     
     // 5. LRC 时间戳
     [ObservableProperty] private string _lrcTimestampFormat;
     
-    partial void OnLrcTimestampFormatChanged(string? oldValue, string newValue)
+    partial void OnLrcTimestampFormatChanged(string value)
     {
-        _settingBean.Config.LrcTimestampFormat = newValue;
+        _settingBean.Config.LrcTimestampFormat = value;
     }
     
     // 6. SRT 时间戳
     [ObservableProperty] private string _srtTimestampFormat;
     
-    partial void OnSrtTimestampFormatChanged(string? oldValue, string newValue)
+    partial void OnSrtTimestampFormatChanged(string value)
     {
-        _settingBean.Config.SrtTimestampFormat = newValue;
+        _settingBean.Config.SrtTimestampFormat = value;
     }
     
     // 7. SRT 时间戳
     [ObservableProperty] private bool _ignoreEmptyLyric;
     
-    partial void OnIgnoreEmptyLyricChanged(bool oldValue, bool newValue)
+    partial void OnIgnoreEmptyLyricChanged(bool value)
     {
-        _settingBean.Config.IgnoreEmptyLyric = newValue;
+        _settingBean.Config.IgnoreEmptyLyric = value;
     }
     
     // 8. SRT 时间戳
     [ObservableProperty] private bool _enableVerbatimLyric;
     
-    partial void OnEnableVerbatimLyricChanged(bool oldValue, bool newValue)
+    partial void OnEnableVerbatimLyricChanged(bool value)
     {
-        _settingBean.Config.EnableVerbatimLyric = newValue;
+        _settingBean.Config.EnableVerbatimLyric = value;
     }
     
     // 9. 译文匹配精度
     [ObservableProperty] private int _matchPrecisionDeviation;
     
-    partial void OnMatchPrecisionDeviationChanged(int oldValue, int newValue)
+    partial void OnMatchPrecisionDeviationChanged(int value)
     {
-        _settingBean.Config.TransConfig.MatchPrecisionDeviation = newValue;
+        _settingBean.Config.TransConfig.MatchPrecisionDeviation = value;
     }
 
     // 10. 百度 APP ID
     [ObservableProperty] private string _baiduAppId;
     
-    partial void OnBaiduAppIdChanged(string? oldValue, string newValue)
+    partial void OnBaiduAppIdChanged(string value)
     {
-        _settingBean.Config.TransConfig.BaiduTranslateAppId = newValue;
+        _settingBean.Config.TransConfig.BaiduTranslateAppId = value;
     }
     
     // 11. 百度密钥
     [ObservableProperty] private string _baiduSecret;
     
-    partial void OnBaiduSecretChanged(string? oldValue, string newValue)
+    partial void OnBaiduSecretChanged(string value)
     {
-        _settingBean.Config.TransConfig.BaiduTranslateSecret = newValue;
+        _settingBean.Config.TransConfig.BaiduTranslateSecret = value;
     }
     
     // 12. 彩云小译 Token
     [ObservableProperty] private string _caiYunToken;
     
-    partial void OnCaiYunTokenChanged(string? oldValue, string newValue)
+    partial void OnCaiYunTokenChanged(string value)
     {
-        _settingBean.Config.TransConfig.CaiYunToken = newValue;
+        _settingBean.Config.TransConfig.CaiYunToken = value;
     }
     
     // 13. 跳过纯音乐
     [ObservableProperty] private bool _ignorePureMusicInSave;
     
-    partial void OnIgnorePureMusicInSaveChanged(bool oldValue, bool newValue)
+    partial void OnIgnorePureMusicInSaveChanged(bool value)
     {
-        _settingBean.Config.IgnorePureMusicInSave = newValue;
+        _settingBean.Config.IgnorePureMusicInSave = value;
     }
     
     // 14. 独立歌词格式分文件保存
     [ObservableProperty] private bool _separateFileForIsolated;
     
-    partial void OnSeparateFileForIsolatedChanged(bool oldValue, bool newValue)
+    partial void OnSeparateFileForIsolatedChanged(bool value)
     {
-        _settingBean.Config.SeparateFileForIsolated = newValue;
+        _settingBean.Config.SeparateFileForIsolated = value;
     }
     
     // 15. 保存文件名
     [ObservableProperty] private string _outputFileNameFormat;
     
-    partial void OnOutputFileNameFormatChanged(string? oldValue, string newValue)
+    partial void OnOutputFileNameFormatChanged(string value)
     {
-        _settingBean.Config.OutputFileNameFormat = newValue;
+        _settingBean.Config.OutputFileNameFormat = value;
     }
     
     // 16. 聚合模糊搜索
     [ObservableProperty] private bool _aggregatedBlurSearch;
     
-    partial void OnAggregatedBlurSearchChanged(bool oldValue, bool newValue)
+    partial void OnAggregatedBlurSearchChanged(bool value)
     {
-        _settingBean.Config.AggregatedBlurSearch = newValue;
+        _settingBean.Config.AggregatedBlurSearch = value;
     }
     
     // 17. 自动读取剪切板
     [ObservableProperty] private bool _autoReadClipboard;
     
-    partial void OnAutoReadClipboardChanged(bool oldValue, bool newValue)
+    partial void OnAutoReadClipboardChanged(bool value)
     {
-        _settingBean.Config.AutoReadClipboard = newValue;
+        _settingBean.Config.AutoReadClipboard = value;
     }
     
     // 18. 自动检查更新
     [ObservableProperty] private bool _autoCheckUpdate;
     
-    partial void OnAutoCheckUpdateChanged(bool oldValue, bool newValue)
+    partial void OnAutoCheckUpdateChanged(bool value)
     {
-        _settingBean.Config.AutoCheckUpdate = newValue;
+        _settingBean.Config.AutoCheckUpdate = value;
     }
     
     // 19. QQ音乐 Cookie
     [ObservableProperty] private string _qqMusicCookie;
     
-    partial void OnQqMusicCookieChanged(string? oldValue, string newValue)
+    partial void OnQqMusicCookieChanged(string value)
     {
-        _settingBean.Config.QQMusicCookie = newValue;
+        _settingBean.Config.QQMusicCookie = value;
     }
     
     // 20. 网易云 Cookie
     [ObservableProperty] private string _netEaseCookie;
     
-    partial void OnNetEaseCookieChanged(string? oldValue, string newValue)
+    partial void OnNetEaseCookieChanged(string value)
     {
-        _settingBean.Config.NetEaseCookie = newValue;
+        _settingBean.Config.NetEaseCookie = value;
     }
     
     // 21. 歌手分隔符
     [ObservableProperty] private string _singerSeparator;
     
-    partial void OnSingerSeparatorChanged(string? oldValue, string newValue)
+    partial void OnSingerSeparatorChanged(string newValue)
     {
         _settingBean.Config.SingerSeparator = newValue;
     }
