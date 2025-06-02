@@ -199,7 +199,7 @@ public class SearchService(SettingBean settingBean) : ISearchService
         }
 
         resultVoList.RemoveAll(one => one.IsEmpty());
-                    
+
         if (resultVoList.Count == 0)
         {
             throw new MusicLyricException(ErrorMsgConst.SEARCH_RESULT_EMPTY);
@@ -219,34 +219,17 @@ public class SearchService(SettingBean settingBean) : ISearchService
             var searchSource = searchParamView.SelectedSearchSource;
             var searchType = searchParamView.SelectedSearchType;
 
-            var directoryInfo = new DirectoryInfo(inputText);
-            foreach (var info in directoryInfo.GetFileSystemInfos())
+            foreach (var filePath in Directory.EnumerateFiles(inputText))
             {
-                if (info is DirectoryInfo)
+                var name = Path.GetFileNameWithoutExtension(filePath);
+                try
                 {
-                    // 文件夹，跳过处理，不做递归
-                    continue;
+                    // check filename is legal param
+                    GlobalUtils.CheckInputId(name, searchSource, searchType);
+                    inputStrList.Add(name);
                 }
-                else
+                catch (MusicLyricException)
                 {
-                    var name = info.Name;
-
-                    if (!string.IsNullOrWhiteSpace(info.Extension) && name.EndsWith(info.Extension))
-                    {
-                        name = name.Remove(name.Length - info.Extension.Length);
-                    }
-
-                    name = name.Trim();
-
-                    try
-                    {
-                        // check filename is legal param
-                        GlobalUtils.CheckInputId(name, searchSource, searchType);
-                        inputStrList.Add(name);
-                    }
-                    catch (MusicLyricException ignore)
-                    {
-                    }
                 }
             }
         }
