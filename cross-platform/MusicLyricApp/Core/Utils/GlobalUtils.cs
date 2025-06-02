@@ -104,7 +104,7 @@ public static partial class GlobalUtils
         if (index != -1)
         {
             var sb = new StringBuilder();
-            foreach (var c in input[(index + urlKeyword.Length)..].ToCharArray())
+            foreach (var c in input[(index + urlKeyword.Length)..])
             {
                 if (char.IsLetterOrDigit(c))
                 {
