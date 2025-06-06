@@ -244,9 +244,9 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         var sb = new StringBuilder();
         sb
-            .Append($"精确搜索: \t Enter").Append(Environment.NewLine)
-            .Append($"模糊搜索: \t Ctrl + Enter").Append(Environment.NewLine)
-            .Append($"保存结果: \t Ctrl + S").Append(Environment.NewLine);
+            .Append("精确搜索: \t Enter").Append(Environment.NewLine)
+            .Append("模糊搜索: \t Ctrl + Enter").Append(Environment.NewLine)
+            .Append("保存结果: \t Ctrl + S").Append(Environment.NewLine);
         
         await DialogHelper.ShowMessage(sb.ToString());
     }
@@ -325,11 +325,11 @@ public partial class MainWindowViewModel : ViewModelBase
                 throw new MusicLyricException(ErrorMsgConst.API_RATE_LIMIT);
             }
 
-            var curMatch = Regex.Match(AppTitle, @"v(\d+)\.(\d+)");
+            var curMatch = VersionRegex().Match(AppTitle);
             var curBigV = int.Parse(curMatch.Groups[1].Value);
             var curSmallV = int.Parse(curMatch.Groups[2].Value);
             
-            var originMatch = Regex.Match(info.TagName, @"v(\d+)\.(\d+)");
+            var originMatch = VersionRegex().Match(info.TagName);
             var bigV = int.Parse(originMatch.Groups[1].Value);
             var smallV = int.Parse(originMatch.Groups[2].Value);
 
@@ -374,6 +374,9 @@ public partial class MainWindowViewModel : ViewModelBase
             _inCheckVersion = false;
         }
     }
+
+    [GeneratedRegex(@"v(\d+)\.(\d+)")]
+    private static partial Regex VersionRegex();
 
     private void UpdateTheme()
     {

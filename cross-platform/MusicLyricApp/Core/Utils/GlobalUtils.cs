@@ -11,7 +11,7 @@ using NLog;
 
 namespace MusicLyricApp.Core.Utils;
 
-public static class GlobalUtils
+public static partial class GlobalUtils
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -93,7 +93,7 @@ public static class GlobalUtils
         }
 
         // QQ 音乐，数字+字母，直接通过
-        if (searchSource == SearchSourceEnum.QQ_MUSIC && Regex.IsMatch(input, @"^[a-zA-Z0-9]*$"))
+        if (searchSource == SearchSourceEnum.QQ_MUSIC && LettersAndNumbersRegex().IsMatch(input))
         {
             return new InputSongId(input, searchSource, searchType);
         }
@@ -104,7 +104,7 @@ public static class GlobalUtils
         if (index != -1)
         {
             var sb = new StringBuilder();
-            foreach (var c in input.Substring(index + urlKeyword.Length).ToCharArray())
+            foreach (var c in input[(index + urlKeyword.Length)..])
             {
                 if (char.IsLetterOrDigit(c))
                 {
@@ -134,7 +134,7 @@ public static class GlobalUtils
                 {
                     var data = html.Substring(indexOf + keyword.Length, endIndexOf - indexOf - keyword.Length);
 
-                    data = data.Trim().Substring(1);
+                    data = data.Trim()[1..];
 
                     var obj = (JObject)JsonConvert.DeserializeObject(data);
 
@@ -156,7 +156,7 @@ public static class GlobalUtils
      */
     public static bool CheckNum(string s)
     {
-        return Regex.IsMatch(s, "^\\d+$", RegexOptions.Compiled);
+        return NumberRegex().IsMatch(s);
     }
 
     /**
@@ -194,12 +194,12 @@ public static class GlobalUtils
 
         try
         {
-            foreach (Match match in new Regex(@"\$fillLength\([^\)]*\)").Matches(content))
+            foreach (Match match in FillLengthRegex().Matches(content))
             {
                 var raw = match.Value;
 
-                var leftQuote = raw.IndexOf("(", StringComparison.Ordinal) + 1;
-                var rightQuote = raw.IndexOf(")", StringComparison.Ordinal);
+                var leftQuote = raw.IndexOf('(') + 1;
+                var rightQuote = raw.IndexOf(')');
 
                 var split = raw.Substring(leftQuote, rightQuote - leftQuote).Split(',');
                 // 三个参数
@@ -220,7 +220,7 @@ public static class GlobalUtils
                 {
                     var diff = targetLength - res.Length;
 
-                    res = (diff < keyword.Length ? keyword.Substring(0, diff) : keyword) + res;
+                    res = (diff < keyword.Length ? keyword[..diff] : keyword) + res;
                 }
 
                 content = content.Replace(raw, res);
@@ -363,11 +363,20 @@ public static class GlobalUtils
     {
         if (str.Length > 128)
         {
-            return str.Substring(0, 125) + "...";
+            return str[..125] + "...";
         }
         else
         {
             return str;
         }
     }
+
+    [GeneratedRegex("^[a-zA-Z0-9]*$")]
+    private static partial Regex LettersAndNumbersRegex();
+    
+    [GeneratedRegex("^\\d+$", RegexOptions.Compiled)]
+    private static partial Regex NumberRegex();
+    
+    [GeneratedRegex(@"\$fillLength\([^\)]*\)")]
+    private static partial Regex FillLengthRegex();
 }

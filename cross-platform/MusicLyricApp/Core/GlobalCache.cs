@@ -53,9 +53,9 @@ public static class GlobalCache
     {
         var key = AddPrefix(keyPrefix, originKey);
 
-        if (Cache.ContainsKey(cacheType) && Cache[cacheType].ContainsKey(key))
+        if (Cache.TryGetValue(cacheType, out var dictionary) && dictionary.TryGetValue(key, out object? result))
         {
-            return (T)Cache[cacheType][key];
+            return (T)result;
         }
         else
         {
@@ -75,18 +75,18 @@ public static class GlobalCache
 
     public static void DoCache(object keyPrefix, CacheType cacheType, string originKey, object value)
     {
-        if (!Cache.ContainsKey(cacheType))
+        if (!Cache.TryGetValue(cacheType, out var dictionary))
         {
-            Cache.Add(cacheType, new Dictionary<object, object>());
+            dictionary = new Dictionary<object, object>();
+            Cache.Add(cacheType, dictionary);
         }
 
-        // add the key if it's non-existent.
-        Cache[cacheType][AddPrefix(keyPrefix, originKey)] = value;
+        dictionary[AddPrefix(keyPrefix, originKey)] = value;
     }
 
     private static string AddPrefix(object prefix, string key)
     {
-        return prefix + "^" + key;
+        return $"{prefix}^{key}";
     }
 
     private static string DelPrefix(string key)
