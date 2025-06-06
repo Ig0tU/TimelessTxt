@@ -660,7 +660,7 @@ public class LyricLineVo : IComparable
                 timestampIndex = mainContent.IndexOf(timestamp, StringComparison.Ordinal);
 
                 // add first
-                result.Add(new LyricLineVo(mainContent.Substring(0, timestampIndex), main.Timestamp));
+                result.Add(new LyricLineVo(mainContent[..timestampIndex], main.Timestamp));
             }
 
             // find next timestamp
@@ -678,7 +678,7 @@ public class LyricLineVo : IComparable
             else
             {
                 // already in end
-                var content = mainContent.Substring(timestampIndex + timestamp.Length);
+                var content = mainContent[(timestampIndex + timestamp.Length)..];
                 result.Add(new LyricLineVo(content, new LyricTimestamp(timestamp)));
             }
 
@@ -795,11 +795,13 @@ public static class EnumHelper
     public static string ToDescription(this Enum val)
     {
         var type = val.GetType();
-        var memberInfo = type.GetMember(val.ToString());
+        var name = val.ToString();
+        var memberInfo = type.GetMember(name);
         var attributes = memberInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
         //如果没有定义描述，就把当前枚举值的对应名称返回
-        if (attributes == null || attributes.Length != 1) return val.ToString();
+        if (attributes.Length != 1) 
+            return name;
 
-        return (attributes.Single() as DescriptionAttribute)?.Description;
+        return (attributes.Single() as DescriptionAttribute)?.Description ?? string.Empty;
     }
 }

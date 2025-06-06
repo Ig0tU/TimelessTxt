@@ -71,7 +71,7 @@ public partial class BlurSearchViewModel(List<SearchResultVo> searchResList) : V
     [RelayCommand]
     private void DownloadSelected()
     {
-        var ids = string.Join(",", SelectedItems
+        var ids = string.Join(',', SelectedItems
             .OfType<BlurSearchResultBase>()
             .Where(e => !string.IsNullOrEmpty(e.Id))
             .Select(e => e.Id));

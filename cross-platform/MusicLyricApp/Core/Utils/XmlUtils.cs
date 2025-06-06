@@ -5,14 +5,8 @@ using System.Xml;
 
 namespace MusicLyricApp.Core.Utils;
 
-public static class XmlUtils
+public static partial class XmlUtils
 {
-    private static readonly Regex AmpRegex = new Regex("&(?![a-zA-Z]{2,6};|#[0-9]{2,4};)");
-
-    private static readonly Regex QuotRegex =
-        new Regex(
-            "(\\s+[\\w:.-]+\\s*=\\s*\")(([^\"]*)((\")((?!\\s+[\\w:.-]+\\s*=\\s*\"|\\s*(?:/?|\\?)>))[^\"]*)*)\"");
-
     /// <summary>
     /// 创建 XML DOM
     /// </summary>
@@ -38,7 +32,7 @@ public static class XmlUtils
     private static string ReplaceAmp(string content)
     {
         // replace & symbol
-        return AmpRegex.Replace(content, "&amp;");
+        return AmpRegex().Replace(content, "&amp;");
     }
 
     private static string ReplaceQuot(string content)
@@ -46,7 +40,7 @@ public static class XmlUtils
         var sb = new StringBuilder();
 
         int currentPos = 0;
-        foreach (Match match in QuotRegex.Matches(content))
+        foreach (Match match in QuotRegex().Matches(content))
         {
             sb.Append(content.Substring(currentPos, match.Index - currentPos));
 
@@ -57,7 +51,7 @@ public static class XmlUtils
             currentPos = match.Index + match.Length;
         }
 
-        sb.Append(content.Substring(currentPos));
+        sb.Append(content[currentPos..]);
 
         return sb.ToString();
     }
@@ -89,7 +83,7 @@ public static class XmlUtils
                     var part1 = content.Substring(left, part.IndexOf("="));
                     if (!part1.Trim().Contains(" "))
                     {
-                        content = content.Substring(0, left) + content.Substring(i + 1);
+                        content = content[..left] + content[(i + 1)..];
                         i = 0;
                         continue;
                     }
@@ -282,4 +276,11 @@ public static class XmlUtils
             RecursionFindElement(xmlNode.ChildNodes.Item(i), mappingDict, resDict);
         }
     }
+
+    [GeneratedRegex("&(?![a-zA-Z]{2,6};|#[0-9]{2,4};)")]
+    private static partial Regex AmpRegex();
+
+    [GeneratedRegex(
+        "(\\s+[\\w:.-]+\\s*=\\s*\")(([^\"]*)((\")((?!\\s+[\\w:.-]+\\s*=\\s*\"|\\s*(?:/?|\\?)>))[^\"]*)*)\"")]
+    private static partial Regex QuotRegex();
 }
