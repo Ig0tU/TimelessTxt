@@ -44,7 +44,16 @@ for target in "${targets[@]}"; do
   cp -R "$extract_dir"/* "$macos_dir/"
   chmod +x "$macos_dir/$app_name"
 
-  # Create Info.plist
+  # 复制图标文件到 Resources 目录
+  icon_source="$extract_dir/Resources/app-logo-macos.icns"
+  if [ -f "$icon_source" ]; then
+    cp "$icon_source" "$resources_dir/"
+    echo "🎨 Copied icon to $resources_dir"
+  else
+    echo "⚠️ Icon file not found at $icon_source"
+  fi
+
+  # Create Info.plist with icon reference
   cat > "$contents_dir/Info.plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
@@ -61,6 +70,8 @@ for target in "${targets[@]}"; do
   <string>$version</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
+  <key>CFBundleIconFile</key>
+  <string>app-logo-macos.icns</string>
 </dict>
 </plist>
 EOF

@@ -22,6 +22,9 @@ targets=(
   "osx-arm64"
 )
 
+# 你图标文件路径
+icon_source="./MusicLyricApp/Resources/app-logo-macos.icns"
+
 trap 'echo "❌ An error occurred. Exiting."' ERR
 
 mkdir -p "$output_root"
@@ -48,6 +51,17 @@ for target in "${targets[@]}"; do
       mv "$original_file" "$output_dir/$new_filename"
       echo "✅ Renamed Windows executable to: $new_filename"
     fi
+  fi
+
+  # macOS 目标单独处理图标复制
+  if [[ "$target" == osx-* ]]; then
+    if [ ! -f "$icon_source" ]; then
+      echo "❌ Icon file not found at '$icon_source'. Please check."
+      exit 1
+    fi
+    mkdir -p "$output_dir/Resources"
+    cp "$icon_source" "$output_dir/Resources/"
+    echo "🎨 Copied macOS icon to $output_dir/Resources/"
   fi
 
   # Determine archive name
