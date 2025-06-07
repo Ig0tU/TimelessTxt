@@ -17,6 +17,7 @@ public class BlurSearchWindow : Window
         
         DataContext = viewModel;
         Content = new BlurSearchView(viewModel);
+        Icon = Constants.GetIcon("search-result");
         
         viewModel.LoadTypeAResults();
     }

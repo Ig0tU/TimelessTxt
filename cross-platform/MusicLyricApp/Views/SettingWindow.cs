@@ -14,5 +14,6 @@ public class SettingWindow : Window
         
         Content = new SettingView();
         DataContext = new SettingViewModel(settingBean);
+        Icon = Constants.GetIcon("settings");
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using Avalonia.Controls;
 
 namespace MusicLyricApp.Models;
 
@@ -23,6 +25,16 @@ public static class Constants
         Directory.CreateDirectory(configDir);
 
         return Path.Combine(configDir, ConfigFileName);
+    }
+
+    public static WindowIcon GetIcon(string name)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var resourceName = "MusicLyricApp.Resources." + name + ".ico";
+
+        using var stream = assembly.GetManifestResourceStream(resourceName);
+        
+        return new WindowIcon(stream);
     }
 
     public const int BatchQuerySize = 300;

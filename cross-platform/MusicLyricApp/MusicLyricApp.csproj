@@ -9,7 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AvaloniaResource Include="Assets\**"/>
         <AvaloniaResource Include="Resources\app-logo.ico" />
     </ItemGroup>
 
@@ -41,6 +40,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="Core14.profile.xml" />
+        <EmbeddedResource Include="Core14.profile.xml" />
+        <EmbeddedResource Include="Resources\settings.ico" />
+        <EmbeddedResource Include="Resources\search-result.ico" />
     </ItemGroup>
 </Project>
