@@ -4,12 +4,6 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Email](https://img.shields.io/badge/Email-jitwxs%40foxmail.com-brightgreen)](#)
 
-### Important Announcement
-
-为了满足后续功能需要，我们将更换技术栈以支持跨平台等其他现代化特性。[v6.5](https://github.com/jitwxs/163MusicLyrics/releases/tag/v6.5) 为基于 Winform 架构的最后一个版本。
-
-如果您在使用新版本的过程中遇到任何问题，请提交 [Issues](https://github.com/jitwxs/163MusicLyrics/issues) 进行反馈，在此期间可回退到老版本进行兼容。
-
 ### How To Use
 
 [👉163MusicLyrics User Guide](https://github.com/jitwxs/163MusicLyrics/wiki)
@@ -35,10 +29,6 @@
 
 Enter the [Github Release](https://github.com/jitwxs/163musiclyrics/releses) page to download the latest version, you can
 click on [Changelog](https://github.com/jitwxs/163musiclyrics/wiki/changelog) to view the changes in different versions.
-
-**注意:** 为了减少应用的体积，部分非必须功能采用插件形式，具体请参阅 User Guide。
-
-**Attention:** To reduce the application's size，some non-essential features require plugins, please refer to the User Guide for more information.
 
 ![screenshot](./images/latest_version.png)
 
@@ -69,12 +59,10 @@ the project, if you are willing to contribute, you can:
 - https://github.com/ElliottSilence/LyricCapture
 - https://github.com/xmcp/QRCD
 - https://github.com/ivanakcheurov/ntextcat
-- https://github.com/Cutano/Kawazu
 
 第三方使用介绍视频 Third party use guide videos
 
 - https://www.bilibili.com/video/BV19R4y197on
-- https://www.xiaohongshu.com/discovery/item/6399a6aa000000001f00987b
 
 ### Donate
 
@@ -85,6 +73,10 @@ maintained personally, all features are free. If you would like to treat the cre
 
 | username     | donate    | platform | date       |
 |:-------------|:----------|:-------|:-----------|
+| 星幻丶碎梦   | 39 CNY     | wechat | 2025-06-07 |
+| 四眼崩牙仔   | 10 CNY     | alipay | 2025-06-07 |
+| ringo   | 5 CNY     | wechat | 2025-06-06 |
+| 芹菜   | 10 CNY     | alipay | 2025-06-05 |
 | *康   | 5 CNY     | wechat | 2025-03-02 |
 | 进击的咕哒子   | 10 CNY     | wechat | 2025-02-22 |
 | 张大师          | 3 CNY     | wechat | 2024-12-26 |
