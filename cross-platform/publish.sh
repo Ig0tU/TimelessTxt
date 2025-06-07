@@ -22,8 +22,8 @@ targets=(
   "osx-arm64"
 )
 
-# 你图标文件路径
-icon_source="./MusicLyricApp/Resources/app-logo-macos.icns"
+# macOS 图标文件路径（icns）
+macos_icon_source="./MusicLyricApp/Resources/app-logo.icns"
 
 trap 'echo "❌ An error occurred. Exiting."' ERR
 
@@ -55,12 +55,12 @@ for target in "${targets[@]}"; do
 
   # macOS 目标单独处理图标复制
   if [[ "$target" == osx-* ]]; then
-    if [ ! -f "$icon_source" ]; then
-      echo "❌ Icon file not found at '$icon_source'. Please check."
+    if [ ! -f "$macos_icon_source" ]; then
+      echo "❌ macOS icon file not found at '$macos_icon_source'. Please check."
       exit 1
     fi
     mkdir -p "$output_dir/Resources"
-    cp "$icon_source" "$output_dir/Resources/"
+    cp "$macos_icon_source" "$output_dir/Resources/"
     echo "🎨 Copied macOS icon to $output_dir/Resources/"
   fi
 

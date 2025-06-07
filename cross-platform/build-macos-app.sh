@@ -45,7 +45,7 @@ for target in "${targets[@]}"; do
   chmod +x "$macos_dir/$app_name"
 
   # 复制图标文件到 Resources 目录
-  icon_source="$extract_dir/Resources/app-logo-macos.icns"
+  icon_source="$extract_dir/Resources/app-logo.icns"
   if [ -f "$icon_source" ]; then
     cp "$icon_source" "$resources_dir/"
     echo "🎨 Copied icon to $resources_dir"
@@ -71,7 +71,7 @@ for target in "${targets[@]}"; do
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleIconFile</key>
-  <string>app-logo-macos.icns</string>
+  <string>app-logo.icns</string>
 </dict>
 </plist>
 EOF
