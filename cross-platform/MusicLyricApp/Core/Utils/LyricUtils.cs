@@ -369,10 +369,13 @@ public static partial class LyricUtils
         foreach (var line in temp)
         {
             // QQ 音乐歌词正式开始标识符
-            if (searchSource == SearchSourceEnum.QQ_MUSIC && "[offset:0]".Equals(line))
+            if (searchSource == SearchSourceEnum.QQ_MUSIC)
             {
-                resultList.Clear();
-                continue;
+                if ("[offset:0]".Equals(line) || line.StartsWith("[kana:"))
+                {
+                    resultList.Clear();
+                    continue;
+                }
             }
 
             var lyricLineVo = new LyricLineVo(line);
